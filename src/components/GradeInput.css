@@ -1,0 +1,10 @@
+.grade { display: flex; align-items: center; gap: var(--space-8); }
+.grade__label { font-size: 12px; line-height: 16px; font-weight: 600; color: var(--text-secondary); }
+.grade__max { color: var(--text-secondary); }
+.grade__value { font-size: 16px; line-height: 22px; font-weight: 600; }
+.grade__input {
+  width: 64px; height: 36px; padding: 0 var(--space-8); text-align: center;
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+}
+.grade__input::placeholder { color: var(--text-secondary); }
+.grade__input:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 0; border-color: var(--brand-primary); }

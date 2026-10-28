@@ -1,20 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import Button from './Button.jsx';
 import Icon from './Icon.jsx';
-import { SUBJECTS } from '../data/mock.js';
 import { today, toInputDate } from '../utils/tasks.js';
 import './AddTaskDialog.css';
 
 const EMPTY = { materia: '', tarea: '', fecha: '' };
 
-export default function AddTaskDialog({ open, onClose, onSubmit }) {
+export default function AddTaskDialog({ open, onClose, onSubmit, subjects, defaultDate = '' }) {
   const ref = useRef(null);
   const [form, setForm] = useState(EMPTY);
 
   useEffect(() => {
     const dialog = ref.current;
     if (open && !dialog.open) {
-      setForm(EMPTY);
+      setForm({ ...EMPTY, fecha: defaultDate });
       dialog.showModal();
     } else if (!open && dialog.open) {
       dialog.close();
@@ -37,8 +36,10 @@ export default function AddTaskDialog({ open, onClose, onSubmit }) {
         <label className="field">
           <span className="field__label">Materia</span>
           <select className="field__input field__input--select" value={form.materia} onChange={set('materia')} required>
-            <option value="" disabled>Selecciona una materia</option>
-            {SUBJECTS.map((s) => <option key={s}>{s}</option>)}
+            <option value="" disabled>
+              {subjects.length ? 'Selecciona una materia' : 'Primero agrega una materia'}
+            </option>
+            {subjects.map((s) => <option key={s}>{s}</option>)}
           </select>
         </label>
 

@@ -4,11 +4,39 @@
   padding: var(--space-16) var(--space-20);
 }
 .task--urgent { border: 2px solid var(--status-urgent); padding: 15px 19px; }
+.task:not(.task--urgent):hover { border-color: var(--brand-primary); }
+.task:has(.task__main:focus-visible) { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+
+/* Todo el contenido de la tarjeta es un botón (cambia el estado) */
+.task__main {
+  flex: 1; min-width: 0; display: flex; align-items: flex-start; gap: var(--space-16);
+  margin: 0; padding: 0; border: 0; background: none; text-align: left; cursor: pointer;
+}
+.task__main:focus-visible { outline: none; }
 .task__info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-4); }
-.task__subject { font-size: 12px; line-height: 16px; color: var(--text-secondary); }
-.task__title { font-size: 16px; line-height: 22px; font-weight: 600; overflow-wrap: anywhere; }
+.task__subject { display: block; font-size: 12px; line-height: 16px; color: var(--text-secondary); }
+.task__title { display: block; font-size: 16px; line-height: 22px; font-weight: 600; overflow-wrap: anywhere; }
 .task--done .task__title { color: var(--text-secondary); }
 .task__side { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-8); }
 .task__due { display: flex; align-items: center; gap: var(--space-4); font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
 .task--urgent .task__due { color: var(--status-urgent); }
 .task--done .task__due { color: var(--status-success); }
+
+.task__actions { display: flex; align-items: center; gap: var(--space-4); align-self: center; }
+
+/* Tarjetas con calificación (página Tareas): contenido | calificación | eliminar */
+.task--grading {
+  display: grid; grid-template-columns: 1fr 104px auto; grid-template-areas: "main grade del";
+  align-items: center;
+}
+.task--grading .task__main { grid-area: main; align-self: start; }
+.task--grading .task__actions { grid-area: del; }
+.task__grade { grid-area: grade; display: flex; flex-direction: column; gap: var(--space-4); }
+.task__grade .grade__input { height: 32px; }
+
+@media (max-width: 900px) {
+  /* En móvil la calificación va en una fila propia debajo de la tarjeta */
+  .task--grading { grid-template-columns: 1fr auto; grid-template-areas: "main del" "grade grade"; row-gap: var(--space-12); }
+  .task__grade { flex-direction: row; align-items: center; gap: var(--space-8); padding-top: var(--space-12); border-top: 1px solid var(--border); }
+  .task__grade--empty { display: none; }
+}

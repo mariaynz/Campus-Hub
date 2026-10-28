@@ -1,0 +1,11 @@
+.gr-list { display: flex; flex-direction: column; gap: var(--space-12); }
+.gr-note { color: var(--text-secondary); font-size: 12px; line-height: 16px; }
+.todo { display: flex; flex-direction: column; }
+.todo__item {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-12);
+  padding: var(--space-12) 0; border-top: 1px solid var(--border);
+}
+.todo__item:first-child { border-top: 0; padding-top: 0; }
+.todo__info { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.todo__subject { font-size: 12px; line-height: 16px; color: var(--text-secondary); }
+.todo__title { font-weight: 600; overflow-wrap: anywhere; }

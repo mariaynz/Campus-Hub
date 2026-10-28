@@ -1,0 +1,47 @@
+.cal__gridwrap { border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+.cal__grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; background: var(--border); }
+.cal__dow {
+  background: var(--bg-surface); padding: var(--space-8); text-align: center;
+  font-size: 12px; line-height: 16px; font-weight: 600; color: var(--text-secondary);
+}
+
+.cal__cell {
+  background: var(--bg-surface); min-height: 112px; min-width: 0; padding: var(--space-8);
+  display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-4); cursor: pointer;
+}
+.cal__cell--out { background: var(--bg-page); }
+.cal__cell--out .cal__day { color: var(--text-secondary); }
+.cal__cell--selected { box-shadow: inset 0 0 0 2px var(--brand-primary); }
+.cal__cell--drop { background: var(--brand-soft); }
+
+.cal__day {
+  width: 28px; height: 28px; padding: 0; border: 0; border-radius: var(--radius-pill);
+  background: transparent; cursor: pointer; display: grid; place-items: center;
+  font-size: 12px; line-height: 16px; font-weight: 600;
+}
+.cal__day:hover { background: var(--bg-subtle); }
+.cal__day--today, .cal__day--today:hover { background: var(--brand-primary); color: var(--text-on-brand); }
+
+.cal__task {
+  width: 100%; padding: 2px var(--space-8); border-radius: var(--radius-sm); cursor: grab;
+  font-size: 12px; line-height: 16px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cal__task:active { cursor: grabbing; }
+.cal__task--pending { background: var(--status-pending-soft); color: var(--status-pending); }
+.cal__task--progress { background: var(--status-progress-soft); color: var(--status-progress); }
+.cal__task--done { background: var(--status-success-soft); color: var(--status-success); }
+.cal__task--urgent { background: var(--status-urgent-soft); color: var(--status-urgent); }
+.cal__more { font-size: 12px; line-height: 16px; color: var(--text-secondary); padding-left: var(--space-8); }
+
+.cal__dots { display: none; }
+.cal__dot { width: 6px; height: 6px; border-radius: 50%; }
+.cal__dot--pending { background: var(--status-pending); }
+.cal__dot--progress { background: var(--status-progress); }
+.cal__dot--done { background: var(--status-success); }
+.cal__dot--urgent { background: var(--status-urgent); }
+
+@media (max-width: 900px) {
+  .cal__cell { min-height: 56px; padding: var(--space-4); align-items: center; }
+  .cal__task, .cal__more { display: none; }
+  .cal__dots { display: flex; gap: var(--space-4); }
+}

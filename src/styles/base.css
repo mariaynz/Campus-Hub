@@ -4,7 +4,7 @@ body {
   margin: 0;
   background: var(--bg-page);
   color: var(--text-primary);
-  font: 400 14px/20px Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font: 400 14px/20px var(--font-body);
 }
 h1, h2, p, ul { margin: 0; padding: 0; }
 ul { list-style: none; }

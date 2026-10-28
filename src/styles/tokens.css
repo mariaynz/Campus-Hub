@@ -1,5 +1,6 @@
 /* Tokens: mismos nombres y valores que las variables de Figma */
 :root {
+  color-scheme: light;
   --bg-page: #f5f6fa;
   --bg-surface: #ffffff;
   --bg-subtle: #eef0f7;
@@ -31,4 +32,62 @@
   --radius-pill: 999px;
 
   --content-width: 1200px;
+
+  --font-body: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
+
+/* ---------- Temas de color (claro) ----------
+   Índigo es el tema base (:root). Cada tema cambia solo la marca y los tintes de fondo.
+   Todos los pares texto/fondo mantienen contraste >= 4.5:1. */
+:root[data-theme="rosa"] {
+  --bg-page: #fdf4f8; --bg-subtle: #fbe8f1; --border: #f1dae6;
+  --brand-primary: #be185d; --brand-soft: #fce7f3;
+  /* el rojo de "urgente" se separa del rosa de marca */
+  --status-urgent: #b91c1c; --status-urgent-soft: #fee2e2;
+}
+:root[data-theme="verde"] {
+  --bg-page: #f3f8f5; --bg-subtle: #e6f1ea; --border: #d7e6dd;
+  --brand-primary: #047857; --brand-soft: #dff5ea;
+}
+:root[data-theme="azul"] {
+  --bg-page: #f3f7fc; --bg-subtle: #e5eef9; --border: #d6e2f1;
+  --brand-primary: #1d4ed8; --brand-soft: #e3edff;
+}
+:root[data-theme="morado"] {
+  --bg-page: #f8f5fc; --bg-subtle: #efe8f8; --border: #e3daf0;
+  --brand-primary: #7e22ce; --brand-soft: #f3e8ff;
+}
+
+/* ---------- Modo oscuro ---------- */
+:root:is([data-mode="dark"], [data-mode="black"]) {
+  color-scheme: dark;
+  --bg-page: #0f1220; --bg-surface: #171b2e; --bg-subtle: #222741; --border: #2e3453;
+  --text-primary: #eceefa; --text-secondary: #a6acc8; --text-on-brand: #0f1220;
+  --brand-primary: #a5b4fc; --brand-soft: #272d63;
+  --status-success: #4ade80; --status-success-soft: #12301f;
+  --status-progress: #fbbf24; --status-progress-soft: #33260c;
+  --status-pending: #cbd5e1; --status-pending-soft: #272c42;
+  --status-urgent: #fb7185; --status-urgent-soft: #3d1624;
+}
+:root:is([data-mode="dark"], [data-mode="black"])[data-theme="rosa"] {
+  --brand-primary: #f9a8d4; --brand-soft: #4a1f37; --status-urgent: #f87171; --status-urgent-soft: #3d1818;
+}
+:root:is([data-mode="dark"], [data-mode="black"])[data-theme="verde"] { --brand-primary: #6ee7b7; --brand-soft: #13392b; }
+:root:is([data-mode="dark"], [data-mode="black"])[data-theme="azul"] { --brand-primary: #93c5fd; --brand-soft: #1b3157; }
+:root:is([data-mode="dark"], [data-mode="black"])[data-theme="morado"] { --brand-primary: #d8b4fe; --brand-soft: #36224f; }
+
+/* Negro: mismo modo oscuro pero con fondos negros puros (ideal para pantallas OLED) */
+:root[data-mode="black"] {
+  --bg-page: #000000; --bg-surface: #0b0b0d; --bg-subtle: #1b1b1f; --border: #2a2a2f;
+  --text-primary: #f4f4f6; --text-secondary: #a8a8b3; --text-on-brand: #000000;
+  --status-success-soft: #0d2617; --status-progress-soft: #2b1f08; --status-pending-soft: #1f1f26; --status-urgent-soft: #35121d;
+}
+:root[data-mode="black"][data-theme="indigo"] { --brand-soft: #1f2350; }
+:root[data-mode="black"][data-theme="rosa"] { --brand-soft: #3d1830; --status-urgent-soft: #331414; }
+:root[data-mode="black"][data-theme="verde"] { --brand-soft: #0f2f23; }
+:root[data-mode="black"][data-theme="azul"] { --brand-soft: #14274a; }
+:root[data-mode="black"][data-theme="morado"] { --brand-soft: #2d1b44; }
+
+/* ---------- Tipografía ---------- */
+:root[data-font="clasica"] { --font-body: "Times New Roman", Times, "Liberation Serif", serif; }
+:root[data-font="elegante"] { --font-body: "Playfair Display", Georgia, "Times New Roman", serif; }

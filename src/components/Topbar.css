@@ -15,16 +15,10 @@
 .tab { padding: var(--space-8) var(--space-16); border-radius: var(--radius-pill); font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
 .tab:hover { background: var(--bg-subtle); }
 .tab--active, .tab--active:hover { background: var(--brand-soft); color: var(--brand-primary); }
-.avatar {
-  width: 40px; height: 40px; border-radius: var(--radius-pill);
-  background: var(--brand-soft); color: var(--brand-primary);
-  display: grid; place-items: center; font-size: 12px; line-height: 16px; font-weight: 600;
-}
 
 @media (max-width: 900px) {
   .topbar__inner { width: 100%; padding: 0; flex-wrap: wrap; }
   .logo { flex: 1; padding: var(--space-12) var(--space-16); }
-  .avatar { margin: var(--space-12) var(--space-16); }
   .tabs {
     order: 3; width: 100%; overflow-x: auto; scrollbar-width: none;
     padding: var(--space-8) var(--space-16); border-top: 1px solid var(--border);

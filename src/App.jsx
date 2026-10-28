@@ -1,70 +1,75 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import Topbar from './components/Topbar.jsx';
-import Welcome from './components/Welcome.jsx';
-import StatCard from './components/StatCard.jsx';
-import TaskList from './components/TaskList.jsx';
-import ProgressPanel from './components/ProgressPanel.jsx';
-import ActivityPanel from './components/ActivityPanel.jsx';
 import AddTaskDialog from './components/AddTaskDialog.jsx';
-import { initialTasks, progress, activity, average } from './data/mock.js';
-import { daysLeft, dueLabel, isDone, isUrgent, parseInputDate, sortTasks } from './utils/tasks.js';
+import AddSubjectDialog from './components/AddSubjectDialog.jsx';
+import HomePage from './pages/HomePage.jsx';
+import TasksPage from './pages/TasksPage.jsx';
+import MateriasPage from './pages/MateriasPage.jsx';
+import CalendarPage from './pages/CalendarPage.jsx';
+import GradesPage from './pages/GradesPage.jsx';
+import useTasks from './hooks/useTasks.js';
+import useSubjects from './hooks/useSubjects.js';
+import useProfile from './hooks/useProfile.js';
+import useHashRoute from './hooks/useHashRoute.js';
 import './App.css';
 
 export default function App() {
-  const [tasks, setTasks] = useState(initialTasks);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const { tasks, addTask, cycleStatus, setTaskGrade, moveTask, removeTask, removeTasksByMateria, resetTasks } = useTasks();
+  const { subjects, addSubject, removeSubject, resetSubjects } = useSubjects();
+  const profile = useProfile();
+  const route = useHashRoute();
+  const [dialog, setDialog] = useState(null); // 'task' | 'subject' | null
+  const [taskDate, setTaskDate] = useState(''); // fecha sugerida al agregar una tarea (YYYY-MM-DD)
 
-  const sorted = useMemo(() => sortTasks(tasks), [tasks]);
-  const pending = sorted.filter((t) => !isDone(t));
-  const inProgress = pending.filter((t) => t.estado === 'En progreso').length;
-  const next = pending[0];
-
-  let subtitle = 'No tienes tareas por entregar. ¡Buen trabajo!';
-  if (next) {
-    const d = daysLeft(next);
-    const when = d <= 0 ? 'hoy' : d === 1 ? 'mañana' : `en ${d} días`;
-    subtitle = `Tienes ${pending.length} ${pending.length === 1 ? 'tarea' : 'tareas'} por entregar. La más urgente vence ${when}.`;
-  }
-
-  const addTask = ({ materia, tarea, fecha }) => {
-    setTasks((prev) => [
-      ...prev,
-      { id: Math.max(0, ...prev.map((t) => t.id)) + 1, materia, tarea, due: parseInputDate(fecha), estado: 'Pendiente' },
-    ]);
-    setDialogOpen(false);
+  const closeDialog = () => setDialog(null);
+  const openTask = (date = '') => {
+    setTaskDate(typeof date === 'string' ? date : '');
+    setDialog('task');
   };
+
+  // Al eliminar una materia también se eliminan sus tareas
+  const deleteSubject = (subject) => {
+    removeTasksByMateria(subject.nombre);
+    removeSubject(subject.id);
+  };
+
+  const resetData = () => { resetTasks(); resetSubjects(); };
+
+  const names = subjects.map((s) => s.nombre);
 
   return (
     <>
-      <Topbar />
-      <main className="page">
-        <Welcome name="María" subtitle={subtitle} onAdd={() => setDialogOpen(true)} />
+      <Topbar route={route.path} profile={profile} onResetData={resetData} />
+      {route.path === '/tareas' && (
+        <TasksPage tasks={tasks} materia={route.materia} onAdd={openTask} onCycle={cycleStatus} onGrade={setTaskGrade} onReschedule={moveTask} onDelete={removeTask} />
+      )}
+      {route.path === '/materias' && (
+        <MateriasPage
+          subjects={subjects}
+          tasks={tasks}
+          onAdd={() => setDialog('subject')}
+          onDelete={deleteSubject}
+        />
+      )}
+      {route.path === '/calendario' && (
+        <CalendarPage tasks={tasks} onAdd={openTask} onCycle={cycleStatus} onMove={moveTask} />
+      )}
+      {route.path === '/calificaciones' && <GradesPage subjects={subjects} tasks={tasks} onGrade={setTaskGrade} />}
+      {route.path === '/' && <HomePage name={profile.first} tasks={tasks} subjects={subjects} onAdd={openTask} onCycle={cycleStatus} />}
 
-        <section className="stats" aria-label="Resumen">
-          <StatCard
-            label="Tareas pendientes"
-            value={pending.length}
-            detail={`${inProgress} en progreso · ${pending.length - inProgress} sin empezar`}
-          />
-          <StatCard
-            featured
-            label="Próxima entrega"
-            value={next ? dueLabel(next) : '—'}
-            detail={next ? `${next.tarea} · ${next.materia}` : 'Todo al día'}
-            urgent={next ? isUrgent(next) : false}
-          />
-          <StatCard label="Promedio general" value={average.value} detail={average.detail} />
-        </section>
-
-        <div className="columns">
-          <TaskList tasks={sorted} />
-          <ProgressPanel segments={progress} />
-        </div>
-
-        <ActivityPanel items={activity} />
-      </main>
-
-      <AddTaskDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onSubmit={addTask} />
+      <AddTaskDialog
+        open={dialog === 'task'}
+        subjects={names}
+        defaultDate={taskDate}
+        onClose={closeDialog}
+        onSubmit={(data) => { addTask(data); closeDialog(); }}
+      />
+      <AddSubjectDialog
+        open={dialog === 'subject'}
+        existing={names}
+        onClose={closeDialog}
+        onSubmit={(data) => { addSubject(data); closeDialog(); }}
+      />
     </>
   );
 }

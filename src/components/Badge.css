@@ -7,3 +7,4 @@
 .badge--progress { background: var(--status-progress-soft); color: var(--status-progress); }
 .badge--pending { background: var(--status-pending-soft); color: var(--status-pending); }
 .badge--done { background: var(--status-success-soft); color: var(--status-success); }
+.badge--urgent { background: var(--status-urgent-soft); color: var(--status-urgent); }

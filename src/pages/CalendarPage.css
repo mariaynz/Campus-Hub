@@ -1,0 +1,19 @@
+.cal {
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: var(--space-24); display: flex; flex-direction: column; gap: var(--space-16);
+}
+.cal__bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-12); }
+.cal__controls { display: flex; align-items: center; gap: var(--space-8); }
+.cal__controls .btn { padding: 7px var(--space-16); } /* misma altura (36px) que las flechas */
+.cal__nav {
+  width: 36px; height: 36px; padding: 0; display: grid; place-items: center; cursor: pointer;
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-pill); color: var(--text-primary);
+}
+.cal__nav:hover { background: var(--bg-subtle); }
+
+.day { display: flex; flex-direction: column; gap: var(--space-16); }
+.cal-empty { color: var(--text-secondary); }
+
+@media (max-width: 900px) {
+  .cal { padding: var(--space-16); }
+}
