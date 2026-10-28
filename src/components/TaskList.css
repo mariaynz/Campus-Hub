@@ -1,0 +1,5 @@
+.tasks { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+.section-head { display: flex; align-items: center; justify-content: space-between; }
+.link { color: var(--brand-primary); font-weight: 500; }
+.link:hover { text-decoration: underline; }
+.task-list { display: flex; flex-direction: column; gap: var(--space-12); }

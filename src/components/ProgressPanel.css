@@ -1,0 +1,12 @@
+.donut { position: relative; width: 180px; height: 180px; margin: var(--space-8) auto; }
+.donut__center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.donut__pct { font-size: 40px; line-height: 44px; font-weight: 700; }
+.donut__label { font-size: 12px; line-height: 16px; color: var(--text-secondary); }
+.legend { display: flex; flex-direction: column; gap: var(--space-12); }
+.legend li { display: flex; align-items: center; gap: var(--space-8); }
+.legend__name { flex: 1; }
+.legend strong { font-weight: 500; }
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot--success { background: var(--status-success); }
+.dot--progress { background: var(--status-progress); }
+.dot--pending { background: var(--status-pending); }

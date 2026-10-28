@@ -1,0 +1,8 @@
+.welcome { display: flex; align-items: center; justify-content: space-between; gap: var(--space-16); }
+.welcome__title { font-size: 28px; line-height: 36px; font-weight: 700; }
+.welcome__sub { color: var(--text-secondary); margin-top: var(--space-4); }
+
+@media (max-width: 900px) {
+  .welcome { flex-direction: column; align-items: stretch; }
+  .welcome .btn { width: 100%; }
+}

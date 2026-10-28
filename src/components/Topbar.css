@@ -1,0 +1,33 @@
+.topbar { background: var(--bg-surface); border-bottom: 1px solid var(--border); }
+.topbar__inner {
+  width: min(var(--content-width), 100% - 64px);
+  margin: 0 auto;
+  padding: var(--space-16) 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo { display: flex; align-items: center; gap: var(--space-12); font-weight: 600; font-size: 16px; line-height: 22px; }
+.logo__mark {
+  width: 36px; height: 36px; border-radius: var(--radius-sm);
+  background: var(--brand-primary); color: var(--text-on-brand);
+  display: grid; place-items: center;
+}
+.tabs { display: flex; align-items: center; gap: var(--space-4); }
+.tab { padding: var(--space-8) var(--space-16); border-radius: var(--radius-pill); font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
+.tab:hover { background: var(--bg-subtle); }
+.tab--active, .tab--active:hover { background: var(--brand-soft); color: var(--brand-primary); }
+.avatar {
+  width: 40px; height: 40px; border-radius: var(--radius-pill);
+  background: var(--brand-soft); color: var(--brand-primary);
+  display: grid; place-items: center; font-size: 12px; line-height: 16px; font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .topbar__inner { width: 100%; padding: 0; flex-wrap: wrap; }
+  .logo { flex: 1; padding: var(--space-12) var(--space-16); }
+  .avatar { margin: var(--space-12) var(--space-16); }
+  .tabs {
+    order: 3; width: 100%; overflow-x: auto; scrollbar-width: none;
+    padding: var(--space-8) var(--space-16); border-top: 1px solid var(--border);
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+}

@@ -1,0 +1,11 @@
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-8);
+  padding: var(--space-12) var(--space-20);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  font-weight: 500; cursor: pointer; white-space: nowrap;
+}
+.btn--primary { background: var(--brand-primary); color: var(--text-on-brand); }
+.btn--primary:hover { filter: brightness(1.1); }
+.btn--secondary { background: var(--bg-surface); border-color: var(--border); color: var(--text-primary); }
+.btn--secondary:hover { background: var(--bg-subtle); }
