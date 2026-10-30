@@ -7,7 +7,7 @@ import './ProfileMenu.css';
 // para poder recorrer las opciones con las flechas. Escape siempre lo cierra.
 const byMouse = (e) => e.detail > 0;
 
-export default function ProfileMenu({ profile, onResetData }) {
+export default function ProfileMenu({ profile, onResetData, onSignOut }) {
   const { name, initials, theme, mode, font, setName, setTheme, setMode, setFont } = profile;
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(name);
@@ -141,7 +141,7 @@ export default function ProfileMenu({ profile, onResetData }) {
             </div>
           </div>
 
-          <div className="profile__section profile__section--last">
+          <div className="profile__section">
             {!confirming ? (
               <button type="button" className="profile__row profile__row--link" onClick={() => setConfirming(true)}>
                 Restablecer datos de ejemplo
@@ -157,6 +157,10 @@ export default function ProfileMenu({ profile, onResetData }) {
                 </div>
               </div>
             )}
+          </div>
+
+          <div className="profile__section profile__section--last">
+            <button type="button" className="profile__row profile__row--link" onClick={onSignOut}>Cerrar sesión</button>
           </div>
         </div>
       )}

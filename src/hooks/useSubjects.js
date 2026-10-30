@@ -1,34 +1,31 @@
-import { useEffect, useState } from 'react';
-import { initialSubjects } from '../data/mock.js';
-
-const KEY = 'campus-hub:subjects:v1';
-
-function load() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(KEY));
-    return Array.isArray(saved) ? saved : initialSubjects;
-  } catch {
-    return initialSubjects;
-  }
-}
+import { useCallback, useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase.js';
 
 export default function useSubjects() {
-  const [subjects, setSubjects] = useState(load);
+  const [subjects, setSubjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const reload = useCallback(async () => {
+    const { data, error } = await supabase.from('materias').select('id, nombre').order('id');
+    if (!error) setSubjects(data);
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(KEY, JSON.stringify(subjects));
-    } catch {
-      /* sin almacenamiento: la app sigue funcionando, solo no guarda */
-    }
-  }, [subjects]);
+    reload();
+  }, [reload]);
 
-  const addSubject = ({ nombre }) =>
-    setSubjects((prev) => [...prev, { id: Math.max(0, ...prev.map((s) => s.id)) + 1, nombre }]);
+  const addSubject = async ({ nombre }) => {
+    const { data, error } = await supabase.from('materias').insert({ nombre }).select('id, nombre').single();
+    if (error) return reload();
+    setSubjects((prev) => [...prev, data]);
+  };
 
-  const removeSubject = (id) => setSubjects((prev) => prev.filter((s) => s.id !== id));
+  const removeSubject = async (id) => {
+    setSubjects((prev) => prev.filter((s) => s.id !== id));
+    const { error } = await supabase.from('materias').delete().eq('id', id);
+    if (error) reload();
+  };
 
-  const resetSubjects = () => setSubjects(initialSubjects);
-
-  return { subjects, addSubject, removeSubject, resetSubjects };
+  return { subjects, loading, reload, addSubject, removeSubject };
 }

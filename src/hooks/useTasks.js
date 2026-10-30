@@ -1,65 +1,79 @@
-import { useEffect, useState } from 'react';
-import { initialTasks } from '../data/mock.js';
-import { fromStored, nextEstado, parseInputDate, today, toStored } from '../utils/tasks.js';
+import { useCallback, useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase.js';
+import { fromStored, nextEstado, today, toInputDate } from '../utils/tasks.js';
 
-const KEY = 'campus-hub:tasks:v1';
-
-function load() {
-  try {
-    const raw = localStorage.getItem(KEY);
-    if (!raw) return initialTasks;
-    const saved = JSON.parse(raw);
-    return Array.isArray(saved) ? saved.map(fromStored) : initialTasks;
-  } catch {
-    return initialTasks;
-  }
-}
+// Fila de la tabla `tareas` → tarea de la app (las fechas pasan a Date)
+const fromRow = (r) =>
+  fromStored({
+    id: r.id,
+    materia: r.materia,
+    tarea: r.tarea,
+    due: r.due,
+    estado: r.estado,
+    completedAt: r.completed_at,
+    calificacion: r.calificacion === null ? null : Number(r.calificacion),
+  });
 
 export default function useTasks() {
-  const [tasks, setTasks] = useState(load);
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const reload = useCallback(async () => {
+    const { data, error } = await supabase.from('tareas').select('*').order('id');
+    if (!error) setTasks(data.map(fromRow));
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(KEY, JSON.stringify(tasks.map(toStored)));
-    } catch {
-      /* sin almacenamiento: la app sigue funcionando, solo no guarda */
-    }
-  }, [tasks]);
+    reload();
+  }, [reload]);
 
-  const addTask = ({ materia, tarea, fecha }) =>
-    setTasks((prev) => [
-      ...prev,
-      {
-        id: Math.max(0, ...prev.map((t) => t.id)) + 1,
-        materia,
-        tarea,
-        due: parseInputDate(fecha),
-        estado: 'Pendiente',
-        completedAt: null,
-        calificacion: null,
-      },
-    ]);
+  // La pantalla cambia al instante; si Supabase falla, se vuelve a leer lo guardado
+  const save = async (query) => {
+    const { error } = await query;
+    if (error) reload();
+  };
+
+  const addTask = async ({ materia, tarea, fecha }) => {
+    const { data, error } = await supabase.from('tareas').insert({ materia, tarea, due: fecha }).select().single();
+    if (error) return reload();
+    setTasks((prev) => [...prev, fromRow(data)]);
+  };
 
   // Pendiente → En progreso → Completada → Pendiente
-  const cycleStatus = (id) =>
-    setTasks((prev) =>
-      prev.map((t) => {
-        if (t.id !== id) return t;
-        const estado = nextEstado(t.estado);
-        return { ...t, estado, completedAt: estado === 'Completada' ? today() : null };
-      })
+  const cycleStatus = (id) => {
+    const task = tasks.find((t) => t.id === id);
+    if (!task) return;
+    const estado = nextEstado(task.estado);
+    const completedAt = estado === 'Completada' ? today() : null;
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, estado, completedAt } : t)));
+    save(
+      supabase
+        .from('tareas')
+        .update({ estado, completed_at: completedAt ? toInputDate(completedAt) : null })
+        .eq('id', id)
     );
+  };
 
-  const setTaskGrade = (id, calificacion) =>
+  const setTaskGrade = (id, calificacion) => {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, calificacion } : t)));
+    save(supabase.from('tareas').update({ calificacion }).eq('id', id));
+  };
 
-  const moveTask = (id, due) => setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, due } : t)));
+  const moveTask = (id, due) => {
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, due } : t)));
+    save(supabase.from('tareas').update({ due: toInputDate(due) }).eq('id', id));
+  };
 
-  const removeTask = (id) => setTasks((prev) => prev.filter((t) => t.id !== id));
+  const removeTask = (id) => {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+    save(supabase.from('tareas').delete().eq('id', id));
+  };
 
-  const removeTasksByMateria = (materia) => setTasks((prev) => prev.filter((t) => t.materia !== materia));
+  const removeTasksByMateria = (materia) => {
+    setTasks((prev) => prev.filter((t) => t.materia !== materia));
+    save(supabase.from('tareas').delete().eq('materia', materia));
+  };
 
-  const resetTasks = () => setTasks(initialTasks);
-
-  return { tasks, addTask, cycleStatus, setTaskGrade, moveTask, removeTask, removeTasksByMateria, resetTasks };
+  return { tasks, loading, reload, addTask, cycleStatus, setTaskGrade, moveTask, removeTask, removeTasksByMateria };
 }

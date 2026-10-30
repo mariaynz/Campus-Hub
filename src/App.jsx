@@ -10,13 +10,26 @@ import GradesPage from './pages/GradesPage.jsx';
 import useTasks from './hooks/useTasks.js';
 import useSubjects from './hooks/useSubjects.js';
 import useProfile from './hooks/useProfile.js';
+import AuthPage from './pages/AuthPage.jsx';
+import useAuth from './hooks/useAuth.js';
 import useHashRoute from './hooks/useHashRoute.js';
+import { supabase } from './lib/supabase.js';
 import './App.css';
 
+// Sin sesión solo se ve el login; con sesión, la app (una instancia por usuario)
 export default function App() {
-  const { tasks, addTask, cycleStatus, setTaskGrade, moveTask, removeTask, removeTasksByMateria, resetTasks } = useTasks();
-  const { subjects, addSubject, removeSubject, resetSubjects } = useSubjects();
-  const profile = useProfile();
+  const session = useAuth();
+  if (session === undefined) return null; // revisando la sesión
+  if (!session) return <AuthPage />;
+  return <Dashboard key={session.user.id} userId={session.user.id} />;
+}
+
+function Dashboard({ userId }) {
+  const tasksStore = useTasks();
+  const { tasks, addTask, cycleStatus, setTaskGrade, moveTask, removeTask, removeTasksByMateria } = tasksStore;
+  const subjectsStore = useSubjects();
+  const { subjects, addSubject, removeSubject } = subjectsStore;
+  const profile = useProfile(userId);
   const route = useHashRoute();
   const [dialog, setDialog] = useState(null); // 'task' | 'subject' | null
   const [taskDate, setTaskDate] = useState(''); // fecha sugerida al agregar una tarea (YYYY-MM-DD)
@@ -33,13 +46,21 @@ export default function App() {
     removeSubject(subject.id);
   };
 
-  const resetData = () => { resetTasks(); resetSubjects(); };
+  const resetData = async () => {
+    await supabase.rpc('restablecer_datos');
+    await Promise.all([tasksStore.reload(), subjectsStore.reload()]);
+  };
+  const signOut = () => supabase.auth.signOut();
 
   const names = subjects.map((s) => s.nombre);
 
+  if (tasksStore.loading || subjectsStore.loading || !profile.ready) {
+    return <main className="page"><p className="welcome__sub">Cargando tus datos…</p></main>;
+  }
+
   return (
     <>
-      <Topbar route={route.path} profile={profile} onResetData={resetData} />
+      <Topbar route={route.path} profile={profile} onResetData={resetData} onSignOut={signOut} />
       {route.path === '/tareas' && (
         <TasksPage tasks={tasks} materia={route.materia} onAdd={openTask} onCycle={cycleStatus} onGrade={setTaskGrade} onReschedule={moveTask} onDelete={removeTask} />
       )}
