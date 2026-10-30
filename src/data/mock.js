@@ -17,12 +17,6 @@ export const initialTasks = [
   { id: 4, materia: 'Bases de Datos', tarea: 'Práctica de consultas', due: daysFromNow(-1), estado: 'Completada', completedAt: daysFromNow(-1), calificacion: 9.0 },
 ];
 
-export const activity = [
-  { id: 1, icon: 'file', tone: 'brand', text: 'Subiste «avance.pdf» a Diseño de Interfaces', time: 'Hace 2 horas' },
-  { id: 2, icon: 'message', tone: 'progress', text: 'Nuevo comentario en Estructuras de Datos', time: 'Ayer' },
-  { id: 3, icon: 'star', tone: 'success', text: 'Nueva calificación en Matemáticas Discretas', time: 'Hace 2 días' },
-];
-
 // `to`: ruta a la que lleva. Las pestañas sin `to` todavía no tienen pantalla.
 export const navItems = [
   { label: 'Inicio', to: '/' },

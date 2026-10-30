@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Icon from '../components/Icon.jsx';
 import Button from '../components/Button.jsx';
 import { supabase } from '../lib/supabase.js';
 import './AuthPage.css';
@@ -19,6 +20,7 @@ export default function AuthPage() {
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const [busy, setBusy] = useState(false);
+  const [show, setShow] = useState(false);
 
   const signup = mode === 'signup';
   const set = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
@@ -66,10 +68,18 @@ export default function AuthPage() {
         </label>
         <label className="field">
           <span className="field__label">Contraseña</span>
-          <input
-            className="field__input" type="password" value={form.password} onChange={set('password')}
-            required minLength={6} autoComplete={signup ? 'new-password' : 'current-password'} placeholder="Mínimo 6 caracteres"
-          />
+          <span className="field__pass">
+            <input
+              className="field__input" type={show ? 'text' : 'password'} value={form.password} onChange={set('password')}
+              required minLength={6} autoComplete={signup ? 'new-password' : 'current-password'} placeholder="Mínimo 6 caracteres"
+            />
+            <button
+              type="button" className="field__eye" onClick={() => setShow((v) => !v)}
+              aria-label={show ? 'Ocultar contraseña' : 'Mostrar contraseña'} aria-pressed={show}
+            >
+              <Icon name={show ? 'eye-off' : 'eye'} />
+            </button>
+          </span>
         </label>
 
         {error && <p className="auth__msg auth__msg--error" role="alert">{error}</p>}

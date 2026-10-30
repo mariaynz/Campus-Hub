@@ -15,6 +15,16 @@
 .auth__link { background: none; border: 0; padding: 0; cursor: pointer; color: var(--brand-primary); font-weight: 500; }
 .auth__link:hover { text-decoration: underline; }
 
+.field__pass { position: relative; display: block; }
+.field__pass .field__input { width: 100%; padding-right: 44px; }
+.field__eye {
+  position: absolute; top: 50%; right: var(--space-4); transform: translateY(-50%);
+  width: 36px; height: 36px; display: grid; place-items: center;
+  background: none; border: 0; border-radius: var(--radius-sm); cursor: pointer; color: var(--text-secondary);
+}
+.field__eye:hover { background: var(--bg-subtle); color: var(--text-primary); }
+.field__eye:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 1px; }
+
 @media (max-width: 900px) {
   .auth__card { padding: var(--space-24); }
 }

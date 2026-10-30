@@ -5,6 +5,9 @@ import './ActivityPanel.css';
 export default function ActivityPanel({ items }) {
   return (
     <Panel title="Actividad reciente" id="activity-title">
+      {items.length === 0 && (
+        <p className="activity__empty">Aún no hay actividad. Completa una tarea y aparecerá aquí.</p>
+      )}
       <ul className="activity__list">
         {items.map((item) => (
           <li key={item.id} className="activity__item">

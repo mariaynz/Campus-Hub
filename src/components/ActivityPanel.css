@@ -4,6 +4,7 @@
 .activity__icon--brand { background: var(--brand-soft); color: var(--brand-primary); }
 .activity__icon--progress { background: var(--status-progress-soft); color: var(--status-progress); }
 .activity__icon--success { background: var(--status-success-soft); color: var(--status-success); }
+.activity__empty { color: var(--text-secondary); }
 .activity__time { font-size: 12px; line-height: 16px; color: var(--text-secondary); margin-top: var(--space-4); }
 
 @media (max-width: 900px) {

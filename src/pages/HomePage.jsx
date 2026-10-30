@@ -4,7 +4,7 @@ import StatCard from '../components/StatCard.jsx';
 import TaskList from '../components/TaskList.jsx';
 import ProgressPanel from '../components/ProgressPanel.jsx';
 import ActivityPanel from '../components/ActivityPanel.jsx';
-import { activity } from '../data/mock.js';
+import { activityFromTasks } from '../utils/activity.js';
 import { greetingFor } from '../utils/greeting.js';
 import { daysLeft, dueLabel, isDone, isUrgent, progressFromTasks, sortTasks, averageFromTasks } from '../utils/tasks.js';
 
@@ -15,6 +15,7 @@ export default function HomePage({ name, tasks, subjects, onAdd, onCycle }) {
   const next = pending[0];
   const average = useMemo(() => averageFromTasks(subjects, tasks), [subjects, tasks]);
   const progress = useMemo(() => progressFromTasks(tasks), [tasks]);
+  const activity = useMemo(() => activityFromTasks(tasks), [tasks]);
 
   let subtitle = 'No tienes tareas por entregar. ¡Buen trabajo!';
   if (next) {
