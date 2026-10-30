@@ -5,6 +5,7 @@ import TaskList from '../components/TaskList.jsx';
 import ProgressPanel from '../components/ProgressPanel.jsx';
 import ActivityPanel from '../components/ActivityPanel.jsx';
 import { activity } from '../data/mock.js';
+import { greetingFor } from '../utils/greeting.js';
 import { daysLeft, dueLabel, isDone, isUrgent, progressFromTasks, sortTasks, averageFromTasks } from '../utils/tasks.js';
 
 export default function HomePage({ name, tasks, subjects, onAdd, onCycle }) {
@@ -24,7 +25,7 @@ export default function HomePage({ name, tasks, subjects, onAdd, onCycle }) {
 
   return (
     <main className="page">
-      <Welcome title={`Hola, ${name}`} subtitle={subtitle} onAdd={onAdd} />
+      <Welcome title={`${greetingFor(new Date().getHours())}, ${name}`} subtitle={subtitle} onAdd={onAdd} />
 
       <section className="stats" aria-label="Resumen">
         <StatCard
