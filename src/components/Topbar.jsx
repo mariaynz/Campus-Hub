@@ -2,7 +2,7 @@ import { navItems } from '../data/mock.js';
 import ProfileMenu from './ProfileMenu.jsx';
 import './Topbar.css';
 
-export default function Topbar({ route = '/', profile, onResetData, onSignOut }) {
+export default function Topbar({ route = '/', profile, email, onResetData, onSignOut, onDeleteAccount }) {
   return (
     <header className="topbar">
       <div className="topbar__inner">
@@ -26,7 +26,7 @@ export default function Topbar({ route = '/', profile, onResetData, onSignOut })
             );
           })}
         </nav>
-        <ProfileMenu profile={profile} onResetData={onResetData} onSignOut={onSignOut} />
+        <ProfileMenu profile={profile} email={email} onResetData={onResetData} onSignOut={onSignOut} onDeleteAccount={onDeleteAccount} />
       </div>
     </header>
   );

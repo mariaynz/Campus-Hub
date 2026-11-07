@@ -59,7 +59,7 @@
 }
 
 /* ---------- Modo oscuro ---------- */
-:root:is([data-mode="dark"], [data-mode="black"]) {
+:root:is([data-mode="dark"], [data-mode="black"], [data-style="cristal"]) {
   color-scheme: dark;
   --bg-page: #0f1220; --bg-surface: #171b2e; --bg-subtle: #222741; --border: #2e3453;
   --text-primary: #eceefa; --text-secondary: #a6acc8; --text-on-brand: #0f1220;
@@ -69,12 +69,12 @@
   --status-pending: #cbd5e1; --status-pending-soft: #272c42;
   --status-urgent: #fb7185; --status-urgent-soft: #3d1624;
 }
-:root:is([data-mode="dark"], [data-mode="black"])[data-theme="rosa"] {
+:root:is([data-mode="dark"], [data-mode="black"], [data-style="cristal"])[data-theme="rosa"] {
   --brand-primary: #f9a8d4; --brand-soft: #4a1f37; --status-urgent: #f87171; --status-urgent-soft: #3d1818;
 }
-:root:is([data-mode="dark"], [data-mode="black"])[data-theme="verde"] { --brand-primary: #6ee7b7; --brand-soft: #13392b; }
-:root:is([data-mode="dark"], [data-mode="black"])[data-theme="azul"] { --brand-primary: #93c5fd; --brand-soft: #1b3157; }
-:root:is([data-mode="dark"], [data-mode="black"])[data-theme="morado"] { --brand-primary: #d8b4fe; --brand-soft: #36224f; }
+:root:is([data-mode="dark"], [data-mode="black"], [data-style="cristal"])[data-theme="verde"] { --brand-primary: #6ee7b7; --brand-soft: #13392b; }
+:root:is([data-mode="dark"], [data-mode="black"], [data-style="cristal"])[data-theme="azul"] { --brand-primary: #93c5fd; --brand-soft: #1b3157; }
+:root:is([data-mode="dark"], [data-mode="black"], [data-style="cristal"])[data-theme="morado"] { --brand-primary: #d8b4fe; --brand-soft: #36224f; }
 
 /* Negro: mismo modo oscuro pero con fondos negros puros (ideal para pantallas OLED) */
 :root[data-mode="black"] {
@@ -89,5 +89,4 @@
 :root[data-mode="black"][data-theme="morado"] { --brand-soft: #2d1b44; }
 
 /* ---------- Tipografía ---------- */
-:root[data-font="clasica"] { --font-body: "Times New Roman", Times, "Liberation Serif", serif; }
 :root[data-font="elegante"] { --font-body: "Playfair Display", Georgia, "Times New Roman", serif; }

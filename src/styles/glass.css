@@ -1,0 +1,62 @@
+/* Estilo "Cristal" (liquid glass): fondo oscuro con un resplandor del color del tema,
+   y superficies translúcidas con desenfoque. Usa siempre la paleta oscura de tokens.css. */
+:root[data-style="cristal"] {
+  --glow: 129, 140, 248; --glass-base: #0d0b24;
+  --bg-page: var(--glass-base);
+  --bg-surface: rgba(255, 255, 255, 0.09);
+  --bg-subtle: rgba(255, 255, 255, 0.12);
+  --border: rgba(255, 255, 255, 0.24);
+  --text-primary: #f6f6ff; --text-secondary: rgba(246, 246, 255, 0.78);
+  --radius-md: 20px; --radius-lg: 28px;
+  --glass-blur: blur(28px) saturate(170%);
+  --glass-edge: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 12px 40px rgba(5, 3, 30, 0.35);
+}
+:root[data-style="cristal"][data-theme="rosa"] { --glow: 244, 114, 182; --glass-base: #1c0a16; }
+:root[data-style="cristal"][data-theme="verde"] { --glow: 52, 211, 153; --glass-base: #06150f; }
+:root[data-style="cristal"][data-theme="azul"] { --glow: 96, 165, 250; --glass-base: #08122a; }
+:root[data-style="cristal"][data-theme="morado"] { --glow: 192, 132, 252; --glass-base: #14081f; }
+
+:root[data-style="cristal"] body {
+  background:
+    radial-gradient(700px 500px at 75% 12%, rgba(var(--glow), 0.5), transparent 70%),
+    radial-gradient(600px 500px at 8% 100%, rgba(var(--glow), 0.32), transparent 70%),
+    var(--glass-base);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+:root[data-style="cristal"] :is(.panel, .stat, .auth__card, .cal, .subject, .gr, .task) {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05));
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-edge);
+}
+:root[data-style="cristal"] .stat--featured { background: linear-gradient(135deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.08)); }
+:root[data-style="cristal"] .stat--urgent { border-color: var(--status-urgent); }
+
+/* Perfil y diálogos: más opacos para que el texto se lea sobre lo que tengan detrás */
+:root[data-style="cristal"] :is(.profile-dialog, .modal) {
+  background: rgba(24, 21, 62, 0.9);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-edge);
+}
+:root[data-style="cristal"] .field__input, :root[data-style="cristal"] .profile__input { background-color: rgba(255, 255, 255, 0.08); }
+
+/* Barra superior: cápsula flotante (en pantallas grandes) */
+:root[data-style="cristal"] .topbar { position: relative; z-index: 20; background: transparent; border-bottom: 0; padding-top: var(--space-16); }
+:root[data-style="cristal"] .topbar__inner {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.06));
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border); box-shadow: var(--glass-edge);
+  border-radius: var(--radius-pill); padding: var(--space-8) var(--space-8) var(--space-8) var(--space-12);
+}
+@media (max-width: 900px) {
+  :root[data-style="cristal"] .topbar { position: relative; z-index: 20; padding-top: 0; background: rgba(13, 11, 36, 0.6); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border-bottom: 1px solid var(--border); }
+  :root[data-style="cristal"] .topbar__inner { background: none; border: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; border-radius: 0; padding: 0; }
+}
+
+/* Calendario: las celdas translúcidas se apilaban sobre el fondo de la cuadrícula y se veía gris */
+:root[data-style="cristal"] .cal__grid { background: transparent; gap: 0; }
+:root[data-style="cristal"] :is(.cal__cell, .cal__dow) { background: rgba(255, 255, 255, 0.04); box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.16); }
+:root[data-style="cristal"] .cal__cell--out { background: rgba(0, 0, 0, 0.22); }
+:root[data-style="cristal"] .cal__cell--drop { background: rgba(var(--glow), 0.25); }
+:root[data-style="cristal"] .cal__cell--selected { box-shadow: inset 0 0 0 2px var(--brand-primary); }

@@ -1,169 +1,107 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { THEMES, MODES, FONTS, MAX_NAME } from '../utils/profile.js';
+import { THEMES, MODES, FONTS, STYLES } from '../utils/profile.js';
 import Icon from './Icon.jsx';
+import AccountPanel from './AccountPanel.jsx';
+import Avatar from './Avatar.jsx';
 import './ProfileMenu.css';
 
-// Un clic real del mouse (detail > 0) cierra el menú al elegir; con teclado se queda abierto
-// para poder recorrer las opciones con las flechas. Escape siempre lo cierra.
-const byMouse = (e) => e.detail > 0;
+const TABS = [
+  { id: 'cuenta', label: 'Cuenta' },
+  { id: 'personalizacion', label: 'Personalización' },
+];
 
-export default function ProfileMenu({ profile, onResetData, onSignOut }) {
-  const { name, initials, theme, mode, font, setName, setTheme, setMode, setFont } = profile;
+// Perfil: ventana centrada con el fondo desenfocado. Los cambios se aplican al instante
+// y la ventana se queda abierta hasta cerrarla con la X (o con Escape).
+export default function ProfileMenu({ profile, email, onResetData, onSignOut, onDeleteAccount }) {
+  const { name, initials, photo, theme, mode, font, style, setTheme, setMode, setFont, setStyle } = profile;
   const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState(name);
-  const [confirming, setConfirming] = useState(false);
-  const wrap = useRef(null);
-  const button = useRef(null);
+  const [tab, setTab] = useState('cuenta'); // 'cuenta' | 'personalizacion'
+  const [session, setSession] = useState(0); // al reabrir, la pestaña Cuenta empieza limpia
+  const dialog = useRef(null);
   const id = useId();
 
-  const close = (returnFocus = false) => {
-    setOpen(false);
-    setConfirming(false);
-    if (returnFocus) button.current?.focus();
-  };
+  useEffect(() => {
+    const d = dialog.current;
+    if (open && !d.open) d.showModal();
+    else if (!open && d.open) d.close();
+  }, [open]);
 
-  const toggle = () => {
-    if (open) return close();
-    setDraft(name);
+  const openDialog = () => {
+    setTab('cuenta');
+    setSession((n) => n + 1);
     setOpen(true);
   };
 
-  // Cerrar al hacer clic fuera, con Escape o al sacar el foco del menú
-  useEffect(() => {
-    if (!open) return undefined;
-    const onPointer = (e) => { if (!wrap.current?.contains(e.target)) close(); };
-    const onKey = (e) => { if (e.key === 'Escape') close(true); };
-    document.addEventListener('pointerdown', onPointer);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('pointerdown', onPointer);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [open]);
-
-  const commitName = () => {
-    if (draft.trim()) setName(draft);
-    else setDraft(name); // vacío: vuelve al nombre anterior
-  };
-
   return (
-    <div className="profile" ref={wrap} onBlur={(e) => { if (open && !wrap.current?.contains(e.relatedTarget) && e.relatedTarget) close(); }}>
-      <button
-        ref={button}
-        type="button"
-        className="avatar"
-        aria-label={`Perfil de ${name}`}
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        aria-controls={id}
-        onClick={toggle}
-      >
-        {initials}
+    <div className="profile">
+      <button type="button" className="avatar" aria-label={`Perfil de ${name}`} aria-haspopup="dialog" onClick={openDialog}>
+        <Avatar photo={photo} initials={initials} />
       </button>
 
-      {open && (
-        <div className="profile__menu" id={id} role="dialog" aria-label="Perfil">
-          <form
-            className="profile__section"
-            onSubmit={(e) => { e.preventDefault(); commitName(); close(true); }}
-          >
-            <label className="profile__label" htmlFor={`${id}-name`}>Nombre</label>
-            <input
-              id={`${id}-name`}
-              className="profile__input"
-              value={draft}
-              maxLength={MAX_NAME}
-              autoComplete="off"
-              onChange={(e) => setDraft(e.target.value)}
-              onBlur={commitName}
-            />
-          </form>
+      <dialog className="profile-dialog" ref={dialog} onClose={() => setOpen(false)} aria-labelledby={`${id}-title`}>
+        <div className="profile-dialog__head">
+          <h2 id={`${id}-title`}>Perfil</h2>
+          <button type="button" className="profile-dialog__close" aria-label="Cerrar" onClick={() => setOpen(false)}>
+            <Icon name="x" />
+          </button>
+        </div>
 
-          <div className="profile__section" role="radiogroup" aria-labelledby={`${id}-theme`}>
-            <span className="profile__label" id={`${id}-theme`}>
-              Tema de color · <span className="profile__current">{THEMES.find((t) => t.id === theme)?.label}</span>
-            </span>
-            <div className="profile__themes">
-              {THEMES.map((t) => (
-                <label key={t.id} className="swatch" title={t.label}>
-                  <input
-                    type="radio"
-                    name={`${id}-theme`}
-                    value={t.id}
-                    checked={theme === t.id}
-                    onChange={() => setTheme(t.id)}
-                    onClick={(e) => { if (byMouse(e)) close(); }}
-                    aria-label={t.label}
-                  />
-                  <span className="swatch__dot" style={{ background: t.swatch }}>
-                    {theme === t.id && <Icon name="check" size={16} />}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div className="profile__section" role="radiogroup" aria-labelledby={`${id}-mode`}>
-            <span className="profile__label" id={`${id}-mode`}>Apariencia</span>
-            <div className="seg">
-              {MODES.map((m) => (
-                <label key={m.id} className="seg__opt">
-                  <input
-                    type="radio"
-                    name={`${id}-mode`}
-                    value={m.id}
-                    checked={mode === m.id}
-                    onChange={() => setMode(m.id)}
-                    onClick={(e) => { if (byMouse(e)) close(); }}
-                  />
-                  <span>{m.label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div className="profile__section" role="radiogroup" aria-labelledby={`${id}-font`}>
-            <span className="profile__label" id={`${id}-font`}>Tipografía</span>
-            <div className="seg">
-              {FONTS.map((f) => (
-                <label key={f.id} className="seg__opt" style={{ fontFamily: f.family }}>
-                  <input
-                    type="radio"
-                    name={`${id}-font`}
-                    value={f.id}
-                    checked={font === f.id}
-                    onChange={() => setFont(f.id)}
-                    onClick={(e) => { if (byMouse(e)) close(); }}
-                  />
-                  <span>{f.label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div className="profile__section">
-            {!confirming ? (
-              <button type="button" className="profile__row profile__row--link" onClick={() => setConfirming(true)}>
-                Restablecer datos de ejemplo
+        <div className="profile-body">
+          <div className="profile-tabs" role="tablist" aria-label="Secciones del perfil" aria-orientation="vertical">
+            {TABS.map((t) => (
+              <button
+                key={t.id} type="button" role="tab" id={`${id}-tab-${t.id}`} aria-selected={tab === t.id} aria-controls={`${id}-panel-${t.id}`}
+                className={'profile-tabs__tab' + (tab === t.id ? ' profile-tabs__tab--active' : '')} onClick={() => setTab(t.id)}
+              >
+                {t.label}
               </button>
-            ) : (
-              <div className="profile__confirm" role="alertdialog" aria-label="Confirmar restablecer">
-                <p>Se borrarán tus tareas y materias y volverán los datos de ejemplo. Tu nombre y tema se quedan.</p>
-                <div className="profile__confirm-actions">
-                  <button type="button" className="profile__btn" onClick={() => setConfirming(false)}>Cancelar</button>
-                  <button type="button" className="profile__btn profile__btn--danger" onClick={() => { onResetData(); close(true); }}>
-                    Restablecer
-                  </button>
-                </div>
+            ))}
+          </div>
+          <div className="profile-panels">
+          <div role="tabpanel" id={`${id}-panel-personalizacion`} aria-labelledby={`${id}-tab-personalizacion`} hidden={tab !== 'personalizacion'}>
+            <div className="profile__section" role="radiogroup" aria-labelledby={`${id}-theme`}>
+              <span className="profile__label" id={`${id}-theme`}>
+                Tema de color · <span className="profile__current">{THEMES.find((t) => t.id === theme)?.label}</span>
+              </span>
+              <div className="profile__themes">
+                {THEMES.map((t) => (
+                  <label key={t.id} className="swatch" title={t.label}>
+                    <input type="radio" name={`${id}-theme`} value={t.id} checked={theme === t.id} onChange={() => setTheme(t.id)} aria-label={t.label} />
+                    <span className="swatch__dot" style={{ background: t.swatch }}>
+                      {theme === t.id && <Icon name="check" size={16} />}
+                    </span>
+                  </label>
+                ))}
               </div>
-            )}
+            </div>
+
+            <Segmented id={`${id}-mode`} label="Apariencia" options={MODES} value={mode} onChange={setMode} />
+            <Segmented id={`${id}-style`} label="Estilo" options={STYLES} value={style} onChange={setStyle} />
+            <Segmented id={`${id}-font`} label="Tipografía" options={FONTS} value={font} onChange={setFont} fonts last />
           </div>
 
-          <div className="profile__section profile__section--last">
-            <button type="button" className="profile__row profile__row--link" onClick={onSignOut}>Cerrar sesión</button>
+          <div role="tabpanel" id={`${id}-panel-cuenta`} aria-labelledby={`${id}-tab-cuenta`} hidden={tab !== 'cuenta'}>
+            <AccountPanel key={session} profile={profile} email={email} onResetData={onResetData} onSignOut={onSignOut} onDeleteAccount={onDeleteAccount} />
+          </div>
           </div>
         </div>
-      )}
+      </dialog>
+    </div>
+  );
+}
+
+function Segmented({ id, label, options, value, onChange, fonts = false, last = false }) {
+  return (
+    <div className={'profile__section' + (last ? ' profile__section--last' : '')} role="radiogroup" aria-labelledby={id}>
+      <span className="profile__label" id={id}>{label}</span>
+      <div className="seg">
+        {options.map((o) => (
+          <label key={o.id} className="seg__opt" style={fonts ? { fontFamily: o.family } : undefined}>
+            <input type="radio" name={id} value={o.id} checked={value === o.id} onChange={() => onChange(o.id)} />
+            <span>{o.label}</span>
+          </label>
+        ))}
+      </div>
     </div>
   );
 }

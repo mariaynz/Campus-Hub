@@ -17,11 +17,15 @@ export const MODES = [
 
 export const FONTS = [
   { id: 'moderna', label: 'Moderna', family: 'Inter, system-ui, sans-serif' },
-  { id: 'clasica', label: 'Clásica', family: '"Times New Roman", Times, serif' },
   { id: 'elegante', label: 'Elegante', family: '"Playfair Display", Georgia, serif' },
 ];
 
-export const DEFAULT_PROFILE = { name: 'María Yáñez', theme: 'indigo', mode: 'light', font: 'moderna' };
+export const STYLES = [
+  { id: 'normal', label: 'Normal' },
+  { id: 'cristal', label: 'Cristal' },
+];
+
+export const DEFAULT_PROFILE = { name: 'María Yáñez', theme: 'indigo', mode: 'light', font: 'moderna', style: 'normal', photo: '' };
 export const MAX_NAME = 40;
 
 export function cleanName(value) {
@@ -38,6 +42,8 @@ export function loadProfile() {
       // perfiles guardados antes tenían solo `dark: true/false`
       mode: MODES.some((m) => m.id === saved.mode) ? saved.mode : saved.dark === true ? 'dark' : 'light',
       font: FONTS.some((f) => f.id === saved.font) ? saved.font : DEFAULT_PROFILE.font,
+      style: STYLES.some((x) => x.id === saved.style) ? saved.style : DEFAULT_PROFILE.style,
+      photo: typeof saved.photo === 'string' && saved.photo.startsWith('https://') ? saved.photo : '',
     };
   } catch {
     return DEFAULT_PROFILE;
@@ -53,11 +59,12 @@ export function saveProfile(profile) {
 }
 
 // Aplica tema y modo en <html> (los estilos viven en tokens.css)
-export function applyProfile({ theme, mode, font }) {
+export function applyProfile({ theme, mode, font, style }) {
   const root = document.documentElement;
   root.dataset.theme = theme;
   root.dataset.mode = mode;
   root.dataset.font = font;
+  root.dataset.style = style || 'normal';
 }
 
 // "María Yáñez" → "MY" · "María" → "MA"

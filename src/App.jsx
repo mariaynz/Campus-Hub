@@ -14,6 +14,7 @@ import AuthPage from './pages/AuthPage.jsx';
 import useAuth from './hooks/useAuth.js';
 import useHashRoute from './hooks/useHashRoute.js';
 import { supabase } from './lib/supabase.js';
+import { photoPath } from './utils/avatar.js';
 import './App.css';
 
 // Sin sesión solo se ve el login; con sesión, la app (una instancia por usuario)
@@ -21,10 +22,10 @@ export default function App() {
   const session = useAuth();
   if (session === undefined) return null; // revisando la sesión
   if (!session) return <AuthPage />;
-  return <Dashboard key={session.user.id} userId={session.user.id} />;
+  return <Dashboard key={session.user.id} userId={session.user.id} email={session.user.email} />;
 }
 
-function Dashboard({ userId }) {
+function Dashboard({ userId, email }) {
   const tasksStore = useTasks();
   const { tasks, addTask, cycleStatus, setTaskGrade, moveTask, removeTask, removeTasksByMateria } = tasksStore;
   const subjectsStore = useSubjects();
@@ -51,6 +52,13 @@ function Dashboard({ userId }) {
     await Promise.all([tasksStore.reload(), subjectsStore.reload()]);
   };
   const signOut = () => supabase.auth.signOut();
+  const deleteAccount = async () => {
+    await supabase.storage.from('avatars').remove([photoPath(userId)]); // la foto no se borra sola con la cuenta
+    const { error } = await supabase.rpc('eliminar_cuenta');
+    if (error) return error;
+    await supabase.auth.signOut({ scope: 'local' }); // la cuenta ya no existe: solo limpia la sesión de este navegador
+    return null;
+  };
 
   const names = subjects.map((s) => s.nombre);
 
@@ -60,7 +68,7 @@ function Dashboard({ userId }) {
 
   return (
     <>
-      <Topbar route={route.path} profile={profile} onResetData={resetData} onSignOut={signOut} />
+      <Topbar route={route.path} profile={profile} email={email} onResetData={resetData} onSignOut={signOut} onDeleteAccount={deleteAccount} />
       {route.path === '/tareas' && (
         <TasksPage tasks={tasks} materia={route.materia} onAdd={openTask} onCycle={cycleStatus} onGrade={setTaskGrade} onReschedule={moveTask} onDelete={removeTask} />
       )}
